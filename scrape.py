@@ -2,9 +2,7 @@
 from bs4 import BeautifulSoup
 import urllib2
 
-def truliaScrape():
-	city = raw_input("What city would you like to explore: ")
-	state = raw_input("What state is %s in? " % city)
+def truliaScrape(city,state):
 	url = "https://www.trulia.com/real_estate/"+city+"-"+state
 	try:
 		content = urllib2.urlopen(url).read()
@@ -49,6 +47,7 @@ def truliaScrape():
 	print "Median age - % s" % medianAge
 	print "Median house incomce - % s" % houseIncome
 	print "Percent college educated - % s" %collegeEducated
+	print ""
 
 """def indeedScrape():
 	city = raw_input("What city would you like to explore: ")
@@ -66,7 +65,24 @@ def truliaScrape():
 	x = soup.find_all("script", {"type": "text/javascript"})
 	print x"""
 
+def zipScrape(city,state):
+	jobTitle = raw_input("What job are you looking for? ")
+	url = "https://www.ziprecruiter.com/candidate/search?search="+jobTitle+"&location="+city+"%2C+CA&radius=5&days="
+	try:
+		content = urllib2.urlopen(url).read()
+	except:
+		print city + ',' + state + " not found, please try again."
+		return 
+
+	soup = BeautifulSoup(content, "html.parser")
+	jobListing = soup.find_all("span", {"class": "just_job_title"})
+	print 'List of full time job postings for %s withing a 5 mile radius of %s.' % (jobTitle,city)
+	for job in jobListing:
+		print job.get_text()
 
 if __name__ == "__main__":
-	truliaScrape()
+	city = raw_input("What city would you like to explore: ")
+	state = raw_input("What state is %s in? " % city)
+	truliaScrape(city,state)
 	#indeedScrape()
+	zipScrape(city,state)
